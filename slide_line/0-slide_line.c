@@ -5,144 +5,149 @@
 #include "slide_line.h"
 
 /**
- * slide_line - Effectue un déplacement et une fusion des éléments d'un tableau d'entiers
- * @array: pointeur vers un tableau d'entiers
- * @length: nombre d'éléments dans le tableau
- * @direction: direction du déplacement (gauche ou droite)
+ * slide_line -  slides and merges an array of integers
+ * @line: pointer to an array of integer
+ * @size: size of the array
+ * @direction: left or right
  *
- * Return: 1 si succès, 0 si échec
+ * Return: 1 upon success or 0 upon failure
  */
-int slide_line(int *array, size_t length, int direction)
+
+int slide_line(int *line, size_t size, int direction)
 {
 	if (direction == SLIDE_LEFT)
 	{
-		shift_left(array, length);
-		combine_left(array, length);
-		shift_left(array, length);
+		slide_left(line, size);
+		merge_left(line, size);
+		slide_left(line, size);
 		return (1);
 	}
 	else if (direction == SLIDE_RIGHT)
 	{
-		shift_right(array, length);
-		combine_right(array, length);
-		shift_right(array, length);
+		slide_right(line, size);
+		merge_right(line, size);
+		slide_right(line, size);
 		return (1);
 	}
 	return (0);
 }
 
 /**
- * shift_left - Décale tous les éléments non nuls du tableau vers la gauche
- * @array: pointeur vers un tableau d'entiers
- * @length: taille du tableau
+ * slide_left -  slides an array of integers to the left
+ * @line: pointer to an array of integer
+ * @size: size of the array
  */
-void shift_left(int *array, size_t length)
-{
-	size_t fill_index = 0;
-	size_t search_index = 0;
 
-	while (search_index < length)
+void slide_left(int *line, size_t size)
+{
+	size_t i = 0;
+	size_t j = 0;
+
+	while (j < size)
 	{
-		if (array[search_index] != 0)
+		if (line[j] != 0)
 		{
-			array[fill_index] = array[search_index];
-			fill_index++;
+			line[i] = line[j];
+			i++;
 		}
-		search_index++;
+		j++;
 	}
-	while (fill_index < length)
+	while (i < size)
 	{
-		array[fill_index] = 0;
-		fill_index++;
+		line[i] = 0;
+		i++;
 	}
 }
 
 /**
- * shift_right - Décale tous les éléments non nuls du tableau vers la droite
- * @array: pointeur vers un tableau d'entiers
- * @length: taille du tableau
+ * slide_right -  slides an array of integers to the left
+ * @line: pointer to an array of integer
+ * @size: size of the array
  */
-void shift_right(int *array, size_t length)
-{
-	int fill_index = length - 1;
-	int search_index = length - 1;
 
-	while (search_index >= 0)
+void slide_right(int *line, size_t size)
+{
+	int i = size - 1;
+	int j = size - 1;
+
+	while (j >= 0)
 	{
-		if (array[search_index] != 0)
+		if (line[j] != 0)
 		{
-			array[fill_index] = array[search_index];
-			fill_index--;
+			line[i] = line[j];
+			i--;
 		}
-		search_index--;
+		j--;
 	}
-	while (fill_index >= 0)
+	while (i >= 0)
 	{
-		array[fill_index] = 0;
-		fill_index--;
+		line[i] = 0;
+		i--;
 	}
 }
 
 /**
- * combine_left - Combine les éléments consécutifs et identiques du tableau en décalant vers la gauche
- * @array: pointeur vers un tableau d'entiers
- * @length: taille du tableau
+ * merge_left -  merges equal values in an array of integers
+ * @line: pointer to an array of integer
+ * @size: size of the array
  */
-void combine_left(int *array, size_t length)
-{
-	size_t i, next;
 
-	for (i = 0; i < length; i++)
+void merge_left(int *line, size_t size)
+{
+	size_t i, j;
+
+	for (i = 0; i < size; i++)
 	{
-		if (array[i] == 0)
+		if (line[i] == 0)
 		{
 			continue;
 		}
-		next = i + 1;
-		while (next < length)
+		j = i + 1;
+		while (j < size)
 		{
-			if (array[next] != 0)
+			if (line[j] != 0)
 			{
-				if (array[i] == array[next])
+				if (line[i] == line[j])
 				{
-					array[i] += array[next];
-					array[next] = 0;
+					line[i] += line[j];
+					line[j] = 0;
 				}
 				break;
 			}
-			next++;
+			j++;
 		}
 	}
 }
 
 /**
- * combine_right - Combine les éléments consécutifs et identiques du tableau en décalant vers la droite
- * @array: pointeur vers un tableau d'entiers
- * @length: taille du tableau
+ * merge_right -  merges equal values in an array of integers
+ * @line: pointer to an array of integer
+ * @size: size of the array
  */
-void combine_right(int *array, size_t length)
-{
-	int i, prev;
 
-	for (i = length - 1; i > 0; i--)
+void merge_right(int *line, size_t size)
+{
+	int i, j;
+
+	for (i = size - 1; i > 0; i--)
 	{
-		if (array[i] == 0)
+		if (line[i] == 0)
 		{
 			continue;
 		}
-		prev = i - 1;
-		while (prev >= 0)
+		j = i - 1;
+		while (j >= 0)
 		{
-			if (array[prev] != 0)
+			if (line[j] != 0)
 			{
-				if (array[i] == array[prev])
+				if (line[i] == line[j])
 				{
-					array[i] += array[prev];
-					array[prev] = 0;
+					line[i] += line[j];
+					line[j] = 0;
 				}
 			}
 			break;
 		}
-		prev--;
+		j--;
 	}
 }
