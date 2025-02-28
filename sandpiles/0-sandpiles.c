@@ -4,50 +4,50 @@
 #include "sandpiles.h"
 
 /**
- * compute_sandpiles - Sum and stabilize two 3x3 sandpiles
- * @pile1: First 3x3 sandpile
- * @pile2: Second 3x3 sandpile
+ * sandpiles_sum - compute two sandpiles sum
+ * @grid1: Left 3x3 grid
+ * @grid2: Right 3x3 grid
  */
 
-void compute_sandpiles(int pile1[3][3], int pile2[3][3])
+void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
-	int row = 0;
-	int col = 0;
+	int i = 0;
+	int j = 0;
 
-	for (row = 0; row < 3; row++)
+	for (i = 0; i < 3; i++)
 	{
-		for (col = 0; col < 3; col++)
+		for (j = 0; j < 3; j++)
 		{
-			pile1[row][col] += pile2[row][col];
+			grid1[i][j] += grid2[i][j];
 		}
 	}
 
-	/* Continuously topple until stability is achieved */
-	while (is_unstable(pile1) == 0)
+	/* Check if grid1 is unstable */
+	while (check_if_unstable(grid1) == 0)
 	{
 		printf("=\n");
-		display_grid(pile1);
-		stabilize_pile(pile1);
+		print_grid(grid1);
+		topple_grid(grid1);
 	}
 }
 
 /**
- * is_unstable - Checks if any cell in a grid exceeds 3
- * @pile: Sandpile to check
+ * check_if_unstable - check if a grid is unstable
+ * @grid1: the grid to check for values superior to 3
  *
- * Return: 0 if unstable, 1 otherwise
+ * Return: 0 if true, 1 if false
  */
 
-int is_unstable(int pile[3][3])
+int check_if_unstable(int grid1[3][3])
 {
-	int row = 0;
-	int col = 0;
+	int i = 0;
+	int j = 0;
 
-	for (row = 0; row < 3; row++)
+	for (i = 0; i < 3; i++)
 	{
-		for (col = 0; col < 3; col++)
+		for (j = 0; j < 3; j++)
 		{
-			if (pile[row][col] > 3)
+			if (grid1[i][j] > 3)
 			{
 				return (0);
 			}
@@ -57,45 +57,45 @@ int is_unstable(int pile[3][3])
 }
 
 /**
- * stabilize_pile - Reduces cells greater than 3 by distributing sand
- * @pile: Sandpile to stabilize
+ * topple_grid - topple grid numbers if superior to 3
+ * @grid1: the grid to topple
  */
 
-void stabilize_pile(int pile[3][3])
+void topple_grid(int grid1[3][3])
 {
-	int row = 0;
-	int col = 0;
-	int overflow[3][3];
+	int i = 0;
+	int j = 0;
+	int topple[3][3];
 
-	for (row = 0; row < 3; row++)
+	for (i = 0; i < 3; i++)
 	{
-		for (col = 0; col < 3; col++)
+		for (j = 0; j < 3; j++)
 		{
-			overflow[row][col] = (pile[row][col] > 3) ? 1 : 0;
+			topple[i][j] = (grid1[i][j] > 3) ? 1 : 0;
 		}
 	}
-	for (row = 0; row < 3; row++)
+	for (i = 0; i < 3; i++)
 	{
-		for (col = 0; col < 3; col++)
+		for (j = 0; j < 3; j++)
 		{
-			if (overflow[row][col] == 1)
+			if (topple[i][j] == 1)
 			{
-				pile[row][col] -= 4;
-				if (row > 0)
+				grid1[i][j] -= 4;
+				if (i > 0)
 				{
-					pile[row - 1][col] += 1;
+					grid1[i - 1][j] += 1;
 				}
-				if (row < 2)
+				if (i < 2)
 				{
-					pile[row + 1][col] += 1;
+					grid1[i + 1][j] += 1;
 				}
-				if (col > 0)
+				if (j > 0)
 				{
-					pile[row][col - 1] += 1;
+					grid1[i][j - 1] += 1;
 				}
-				if (col < 2)
+				if (j < 2)
 				{
-					pile[row][col + 1] += 1;
+					grid1[i][j + 1] += 1;
 				}
 			}
 		}
@@ -103,20 +103,21 @@ void stabilize_pile(int pile[3][3])
 }
 
 /**
- * display_grid - Outputs a 3x3 sandpile to the console
- * @grid: Grid to display
+ * print_grid - Print 3x3 grid
+ * @grid: 3x3 grid
+ *
  */
-static void display_grid(int grid[3][3])
+static void print_grid(int grid[3][3])
 {
-	int row, col;
+	int i, j;
 
-	for (row = 0; row < 3; row++)
+	for (i = 0; i < 3; i++)
 	{
-		for (col = 0; col < 3; col++)
+		for (j = 0; j < 3; j++)
 		{
-			if (col)
+			if (j)
 				printf(" ");
-			printf("%d", grid[row][col]);
+			printf("%d", grid[i][j]);
 		}
 		printf("\n");
 	}
