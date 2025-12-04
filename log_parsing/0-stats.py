@@ -1,49 +1,52 @@
 #!/usr/bin/python3
+
+'''
+Reads stdin line by line and computes metrics
+'''
 import sys
 
+if __name__ == "__main__":
 
-"""Script to get stat from a requets"""
+    status_codes = {200: 0, 301: 0, 400: 0, 401: 0,
+                    403: 0, 404: 0, 405: 0, 500: 0}
+    file_size = [0]
+    count = 1
 
-i = 0
-my_dict = {}
-status_available = ['200', '301', '400', '401', '403', '404', '405', '500']
-total_size = 0
+    def print_stats():
+        '''
+        Prints file size and stats for every 10 loops
+        '''
+        print('File size: {}'.format(file_size[0]))
 
+        for code in sorted(status_codes.keys()):
+            if status_codes[code] != 0:
+                print('{}: {}'.format(code, status_codes[code]))
 
-def print_stats(total_size, my_dict):
-    print("File size: {}".format(total_size))
-    for key in sorted(my_dict):
-        print("{}: {}".format(key, my_dict[key]))
-
-
-try:
-    for line in sys.stdin:
-        line_split = line.split()
-
+    def parse_stdin(line):
+        '''
+        Checks the stdin for matches
+        '''
         try:
-            file_size = line_split[-1]
-            total_size += int(file_size)
-        except (IndexError, ValueError):
+            line = line[:-1]
+            word = line.split(' ')
+
+            file_size[0] += int(word[-1])
+
+            status_code = int(word[-2])
+
+            if status_code in status_codes:
+                status_codes[status_code] += 1
+        except BaseException:
             pass
 
-        try:
-            status_code = line_split[-2]
-            if status_code in status_available:
-                if status_code in my_dict:
-                    my_dict[status_code] += 1
-                else:
-                    my_dict[status_code] = 1
-        except (IndexError, ValueError):
-            pass
+    try:
+        for line in sys.stdin:
+            parse_stdin(line)
 
-        i += 1
-
-        if i == 10:
-            print_stats(total_size, my_dict)
-            i = 0
-
-    print_stats(total_size, my_dict)
-
-except KeyboardInterrupt:
-    print_stats(total_size, my_dict)
-    raise
+            if count % 10 == 0:
+                print_stats()
+            count += 1
+    except KeyboardInterrupt:
+        print_stats()
+        raise
+    print_stats()
